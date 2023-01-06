@@ -9,36 +9,31 @@ public class MeshGenerator : MonoBehaviour
     [SerializeField] float _scale;
     [SerializeField] private Material _material;
     private Mesh testMesh;
+    private int[] triangles;
     private Vector3[] vertices;
+    MeshFilter mf;
+    MeshRenderer mr;
 
     // Start is called before the first frame update
     void Start()
     {
         vertices = GenerateVertices(_subdivisions, _sizes);
-        int[] triangles = GenerateTriangles(vertices);
+        triangles = GenerateTriangles(vertices);
         vertices = ApplyNoise(vertices, _scale, _offset);
 
         testMesh = new Mesh();
         testMesh.vertices = vertices;
         testMesh.triangles = triangles;
         GameObject gm = new GameObject();
-        MeshFilter mf = gm.AddComponent<MeshFilter>();
-        MeshRenderer mr = gm.AddComponent<MeshRenderer>();
+        mf = gm.AddComponent<MeshFilter>();
+        mr = gm.AddComponent<MeshRenderer>();
         testMesh.RecalculateNormals();
         mf.mesh = testMesh;
         mr.material = _material;
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        vertices = GenerateVertices(_subdivisions, _sizes);
-        vertices = ApplyNoise(vertices, _scale, _offset);
 
-        testMesh.vertices = vertices;
-
-    }
 
     private Vector3[] GenerateVertices(int subdivisions, Vector2 size)
     {
@@ -91,4 +86,15 @@ public class MeshGenerator : MonoBehaviour
         return vertices;
     }
 
+    public void RecalculateMesh(int subdivisions)
+    {
+        vertices = GenerateVertices(subdivisions, _sizes);
+        triangles = GenerateTriangles(vertices);
+        vertices = ApplyNoise(vertices, _scale, _offset);
+        testMesh.RecalculateNormals();
+        testMesh.vertices = vertices;
+        testMesh.triangles = triangles;
+        mf.mesh = testMesh;
+        mr.material = _material;
+    }
 }

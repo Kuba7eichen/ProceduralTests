@@ -15,7 +15,7 @@ public class NoiseGenerator : MonoBehaviour
                 float sampleX = (float)x * scale + offset.x;
                 float sampleY = (float)y * scale + offset.y;
                 noiseMap[x, y] = Mathf.PerlinNoise(sampleX, sampleY);
-                print(Mathf.PerlinNoise(sampleX, sampleY));
+                
             }
         }
         return noiseMap;
