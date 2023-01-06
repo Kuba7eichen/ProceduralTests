@@ -1,0 +1,87 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MeshGenerator : MonoBehaviour
+{
+    [SerializeField] Vector2 sizes;
+    [SerializeField] int subdivisions;
+    [SerializeField] private Material _material;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        Vector3[] vertices = GenerateVertices(subdivisions, sizes);
+        int[] triangles = GenerateTriangles(vertices);
+        vertices = ApplyNoise(vertices);
+
+        Mesh testMesh = new Mesh();
+        testMesh.vertices = vertices;
+        testMesh.triangles = triangles;
+        GameObject gm = new GameObject();
+        MeshFilter mf = gm.AddComponent<MeshFilter>();
+        MeshRenderer mr = gm.AddComponent<MeshRenderer>();
+        testMesh.RecalculateNormals();
+        mf.mesh = testMesh;
+        mr.material = _material;
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    private Vector3[] GenerateVertices(int subdivisions, Vector2 size)
+    {
+        float nbVerticesInARow = subdivisions + 2;
+        Vector3[] vertices = new Vector3[(int)(nbVerticesInARow * nbVerticesInARow)];
+
+
+        for (int i = 0, y = 0; y < nbVerticesInARow; y++)
+        {
+            for (int x = 0; x < nbVerticesInARow; x++, i++)
+            {
+                vertices[i] = new Vector3(x, 0, y);
+            }
+        }
+        return vertices;
+
+    }
+
+    private int[] GenerateTriangles(Vector3[] vertices)
+    {
+        int verticesInRow = (int)Mathf.Sqrt(vertices.Length);
+        int[] triangles = new int[(int)(verticesInRow-1)*(verticesInRow-1)*6]; // *2 for two triangles by quad and *3 for 3 points each triangle
+
+        for (int ti = 0, vi = 0, y = 0; y < verticesInRow-1; y++, vi++)
+        {
+            for (int x = 0; x < verticesInRow-1; x++, ti += 6, vi++)
+            {
+                
+                triangles[ti] = vi;
+                triangles[ti + 3] = triangles[ti + 2] = vi + 1;
+                triangles[ti + 4] = triangles[ti + 1] = vi + verticesInRow;
+                triangles[ti + 5] = vi + verticesInRow + 1;
+
+            }
+        }
+        return triangles;
+    }
+
+    private Vector3[] ApplyNoise(Vector3[] vertices)
+    {
+        float[,] noiseMap = NoiseGenerator.Generate((int)Mathf.Sqrt(vertices.Length), (int)Mathf.Sqrt(vertices.Length), 0.15f);
+
+        for(int i = 0; i < Mathf.Sqrt(vertices.Length); i++)
+        {
+            for(int j = 0; j < Mathf.Sqrt(vertices.Length); j++)
+            {
+                vertices[j + i * (int)Mathf.Sqrt(vertices.Length)] += Vector3.up * noiseMap[j, i];
+            }
+        }
+        return vertices;
+    }
+
+}
