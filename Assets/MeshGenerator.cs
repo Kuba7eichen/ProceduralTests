@@ -91,9 +91,10 @@ public class MeshGenerator : MonoBehaviour
         vertices = GenerateVertices(subdivisions, _sizes);
         triangles = GenerateTriangles(vertices);
         vertices = ApplyNoise(vertices, _scale, _offset);
-        testMesh.RecalculateNormals();
+        
         testMesh.vertices = vertices;
         testMesh.triangles = triangles;
+        testMesh.RecalculateNormals();
         mf.mesh = testMesh;
         mr.material = _material;
     }
