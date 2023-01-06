@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NoiseGenerator : MonoBehaviour
 {
-    public static float[,] Generate(int width, int heigh, float scale = 0.15f)
+    public static float[,] Generate(int width, int heigh, float scale, Vector2 offset)
     {
         float[,] noiseMap = new float[width, heigh];
 
@@ -12,8 +12,8 @@ public class NoiseGenerator : MonoBehaviour
         {
             for(int y=0; y<heigh; y++)
             {
-                float sampleX = (float)x * scale;
-                float sampleY = (float)y * scale;
+                float sampleX = (float)x * scale + offset.x;
+                float sampleY = (float)y * scale + offset.y;
                 noiseMap[x, y] = Mathf.PerlinNoise(sampleX, sampleY);
                 print(Mathf.PerlinNoise(sampleX, sampleY));
             }

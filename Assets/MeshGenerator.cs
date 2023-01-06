@@ -4,18 +4,21 @@ using UnityEngine;
 
 public class MeshGenerator : MonoBehaviour
 {
-    [SerializeField] Vector2 sizes;
-    [SerializeField] int subdivisions;
+    [SerializeField] Vector2 _sizes, _offset;
+    [SerializeField] int _subdivisions;
+    [SerializeField] float _scale;
     [SerializeField] private Material _material;
+    private Mesh testMesh;
+    private Vector3[] vertices;
 
     // Start is called before the first frame update
     void Start()
     {
-        Vector3[] vertices = GenerateVertices(subdivisions, sizes);
+        vertices = GenerateVertices(_subdivisions, _sizes);
         int[] triangles = GenerateTriangles(vertices);
-        vertices = ApplyNoise(vertices);
+        vertices = ApplyNoise(vertices, _scale, _offset);
 
-        Mesh testMesh = new Mesh();
+        testMesh = new Mesh();
         testMesh.vertices = vertices;
         testMesh.triangles = triangles;
         GameObject gm = new GameObject();
@@ -30,6 +33,10 @@ public class MeshGenerator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        vertices = GenerateVertices(_subdivisions, _sizes);
+        vertices = ApplyNoise(vertices, _scale, _offset);
+
+        testMesh.vertices = vertices;
 
     }
 
@@ -43,7 +50,7 @@ public class MeshGenerator : MonoBehaviour
         {
             for (int x = 0; x < nbVerticesInARow; x++, i++)
             {
-                vertices[i] = new Vector3(x, 0, y);
+                vertices[i] = new Vector3(x/nbVerticesInARow * size.x, 0, y / nbVerticesInARow * size.x);
             }
         }
         return vertices;
@@ -70,9 +77,9 @@ public class MeshGenerator : MonoBehaviour
         return triangles;
     }
 
-    private Vector3[] ApplyNoise(Vector3[] vertices)
+    private Vector3[] ApplyNoise(Vector3[] vertices, float scale, Vector2 offset)
     {
-        float[,] noiseMap = NoiseGenerator.Generate((int)Mathf.Sqrt(vertices.Length), (int)Mathf.Sqrt(vertices.Length), 0.15f);
+        float[,] noiseMap = NoiseGenerator.Generate((int)Mathf.Sqrt(vertices.Length), (int)Mathf.Sqrt(vertices.Length), scale, offset);
 
         for(int i = 0; i < Mathf.Sqrt(vertices.Length); i++)
         {
