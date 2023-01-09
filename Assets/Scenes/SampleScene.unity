@@ -302,11 +302,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4a94a355c39bb342a009cb5874dbd8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sizes: {x: 50, y: 50}
+  _sizes: {x: 100, y: 100}
   _offset: {x: 4, y: 4}
-  _subdivisions: 5
+  _subdivisions: 50
   _scale: 0.2
-  _material: {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  _material: {fileID: 2100000, guid: 8479a68874f8efa4c814eb3d1afa70d3, type: 2}
 --- !u!1 &365230668
 GameObject:
   m_ObjectHideFlags: 0

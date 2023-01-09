@@ -127,7 +127,7 @@ public class MeshGenerator : MonoBehaviour
         Color[] colors = new Color[mesh.vertexCount];
         for(int i = 0; i< mesh.vertexCount; i++)
         {
-            print(mesh.vertices[i].y);
+            //print(mesh.vertices[i].y);
             if(mesh.vertices[i].y<0.2)
             {
                 colors[i] = Color.blue;
