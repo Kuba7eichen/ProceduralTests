@@ -8,7 +8,6 @@ public class MeshGenerator : MonoBehaviour
     [SerializeField] int _subdivisions;
     [SerializeField] float _scale;
     [SerializeField] private Material _material;
-    private Mesh testMesh;
     private int[] triangles;
     private Vector3[] vertices;
     MeshFilter mf;
@@ -21,13 +20,14 @@ public class MeshGenerator : MonoBehaviour
         triangles = GenerateTriangles(vertices);
         vertices = ApplyNoise(vertices, _scale, _offset);
 
-        testMesh = new Mesh();
+        Mesh testMesh = new Mesh();
         testMesh.vertices = vertices;
         testMesh.triangles = triangles;
         GameObject gm = new GameObject();
         mf = gm.AddComponent<MeshFilter>();
         mr = gm.AddComponent<MeshRenderer>();
         testMesh.RecalculateNormals();
+        ApplyColor(ref testMesh);
         mf.mesh = testMesh;
         mr.material = _material;
 
@@ -35,7 +35,7 @@ public class MeshGenerator : MonoBehaviour
 
 
 
-    private Vector3[] GenerateVertices(int subdivisions, Vector2 size)
+    private static Vector3[] GenerateVertices(int subdivisions, Vector2 size)
     {
         float nbVerticesInARow = subdivisions + 2;
         Vector3[] vertices = new Vector3[(int)(nbVerticesInARow * nbVerticesInARow)];
@@ -52,7 +52,7 @@ public class MeshGenerator : MonoBehaviour
 
     }
 
-    private int[] GenerateTriangles(Vector3[] vertices)
+    private static int[] GenerateTriangles(Vector3[] vertices)
     {
         int verticesInRow = (int)Mathf.Sqrt(vertices.Length);
         int[] triangles = new int[(int)(verticesInRow-1)*(verticesInRow-1)*6]; // *2 for two triangles by quad and *3 for 3 points each triangle
@@ -72,7 +72,7 @@ public class MeshGenerator : MonoBehaviour
         return triangles;
     }
 
-    private Vector3[] ApplyNoise(Vector3[] vertices, float scale, Vector2 offset)
+    private static Vector3[] ApplyNoise(Vector3[] vertices, float scale, Vector2 offset)
     {
         float[,] noiseMap = NoiseGenerator.Generate((int)Mathf.Sqrt(vertices.Length), (int)Mathf.Sqrt(vertices.Length), scale, offset);
 
@@ -91,11 +91,56 @@ public class MeshGenerator : MonoBehaviour
         vertices = GenerateVertices(subdivisions, _sizes);
         triangles = GenerateTriangles(vertices);
         vertices = ApplyNoise(vertices, _scale, _offset);
-        
+
+        Mesh testMesh = new Mesh();
         testMesh.vertices = vertices;
         testMesh.triangles = triangles;
+        ApplyColor(ref testMesh);
         testMesh.RecalculateNormals();
         mf.mesh = testMesh;
         mr.material = _material;
+    }
+
+    public static GameObject GenerateMesh(int subdivisions, Vector2 sizes, float scale, Vector2 offset, Material material)
+    {
+
+        Vector3[] vertices = GenerateVertices(subdivisions, sizes);
+        int[] triangles = GenerateTriangles(vertices);
+        vertices = ApplyNoise(vertices, scale, offset);
+
+        Mesh testMesh = new Mesh();
+        testMesh.vertices = vertices;
+        testMesh.triangles = triangles;
+        GameObject gm = new GameObject();
+        MeshFilter mf = gm.AddComponent<MeshFilter>();
+        MeshRenderer mr = gm.AddComponent<MeshRenderer>();
+        testMesh.RecalculateNormals();
+        ApplyColor(ref testMesh);
+        mf.mesh = testMesh;
+        mr.material = material;
+
+        return gm;
+    }
+
+    private static void ApplyColor(ref Mesh mesh)
+    {
+        Color[] colors = new Color[mesh.vertexCount];
+        for(int i = 0; i< mesh.vertexCount; i++)
+        {
+            print(mesh.vertices[i].y);
+            if(mesh.vertices[i].y<0.2)
+            {
+                colors[i] = Color.blue;
+            }
+            else if(mesh.vertices[i].y > 0.8)
+            {
+                colors[i] = Color.white;
+            }
+            else
+            {
+                colors[i] = Color.green;
+            }
+        }
+        mesh.colors = colors;
     }
 }
