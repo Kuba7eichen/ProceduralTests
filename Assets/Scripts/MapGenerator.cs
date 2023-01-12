@@ -18,7 +18,8 @@ public class MapGenerator : MonoBehaviour
         NORTH,
         SOUTH,
         EAST,
-        WEST
+        WEST,
+        NONE
     }
 
     // Start is called before the first frame update

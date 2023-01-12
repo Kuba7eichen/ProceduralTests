@@ -8,11 +8,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MapGenerator _mapGenerator;
     [SerializeField] private float _renderingDistance;
     private GameObject _currentChunk;
-    private GameObject _latestChunk;
     // Start is called before the first frame update
     void Start()
     {
-       _currentChunk = _mapGenerator.GenerateChunk();
+        _currentChunk = _mapGenerator.GenerateChunk();
+        _currentChunk.AddComponent<MeshCollider>();
         _mapGenerator._currentChunk = _currentChunk;
     }
 
@@ -21,24 +21,31 @@ public class GameManager : MonoBehaviour
     {
         print("pos " + (_player.transform.position.x - _currentChunk.transform.position.x));
         print("test " + (_mapGenerator._chunkSize.x / 2 - _renderingDistance));
+        MapGenerator.Direction dir = MapGenerator.Direction.NONE;
         if((_player.transform.position.x - _currentChunk.transform.position.x) > _mapGenerator._chunkSize.x / 2 - _renderingDistance)
         {
-            _currentChunk = _mapGenerator.GenerateChunk(MapGenerator.Direction.EAST);
+            dir = MapGenerator.Direction.EAST;
         }
 
-        if ((_player.transform.position.x - _currentChunk.transform.position.x) < _mapGenerator._chunkSize.x / -2 - _renderingDistance)
+        if ((_player.transform.position.x - _currentChunk.transform.position.x) < _mapGenerator._chunkSize.x / -2 + _renderingDistance)
         {
-            _currentChunk = _mapGenerator.GenerateChunk(MapGenerator.Direction.WEST);
+            dir = MapGenerator.Direction.WEST;
         }
 
         if ((_player.transform.position.z - _currentChunk.transform.position.z) > _mapGenerator._chunkSize.y / 2 - _renderingDistance)
         {
-            _currentChunk = _mapGenerator.GenerateChunk(MapGenerator.Direction.NORTH);
+            dir = MapGenerator.Direction.NORTH;
         }
 
-        if ((_player.transform.position.z - _currentChunk.transform.position.z) < _mapGenerator._chunkSize.y / -2 - _renderingDistance)
+        if ((_player.transform.position.z - _currentChunk.transform.position.z) < _mapGenerator._chunkSize.y / -2 + _renderingDistance)
         {
-            _currentChunk = _mapGenerator.GenerateChunk(MapGenerator.Direction.SOUTH);
+            dir = MapGenerator.Direction.SOUTH;
+        }
+
+        if (dir != MapGenerator.Direction.NONE)
+        {
+            _currentChunk = _mapGenerator.GenerateChunk(dir);
+            _currentChunk.AddComponent<MeshCollider>();
         }
 
     }
