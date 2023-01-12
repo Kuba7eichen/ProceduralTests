@@ -16,20 +16,19 @@ public class MeshGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        vertices = GenerateVertices(_subdivisions, _sizes);
-        triangles = GenerateTriangles(vertices);
-        vertices = ApplyNoise(vertices, _scale, _offset);
+        //vertices = GenerateVertices(_subdivisions, _sizes);
+        //triangles = GenerateTriangles(vertices);
+        //vertices = ApplyNoise(vertices, _scale, _offset);
 
-        Mesh testMesh = new Mesh();
-        testMesh.vertices = vertices;
-        testMesh.triangles = triangles;
-        GameObject gm = new GameObject();
-        mf = gm.AddComponent<MeshFilter>();
-        mr = gm.AddComponent<MeshRenderer>();
-        testMesh.RecalculateNormals();
-        ApplyColor(ref testMesh);
-        mf.mesh = testMesh;
-        mr.material = _material;
+        //Mesh testMesh = new Mesh();
+        //testMesh.vertices = vertices;
+        //testMesh.triangles = triangles;
+        //GameObject gm = new GameObject();
+        //mf = gm.AddComponent<MeshFilter>();
+        //mr = gm.AddComponent<MeshRenderer>();
+        //testMesh.RecalculateNormals();
+        //mf.mesh = testMesh;
+        //mr.material = _material;
 
     }
 
@@ -38,14 +37,14 @@ public class MeshGenerator : MonoBehaviour
     private static Vector3[] GenerateVertices(int subdivisions, Vector2 size)
     {
         float nbVerticesInARow = subdivisions + 2;
-        Vector3[] vertices = new Vector3[(int)(nbVerticesInARow * nbVerticesInARow)];
+        Vector3[] vertices = new Vector3[(int)((nbVerticesInARow + 1) * (nbVerticesInARow + 1))];
 
 
-        for (int i = 0, y = 0; y < nbVerticesInARow; y++)
+        for (int i = 0, y = 0; y <= nbVerticesInARow; y++)
         {
-            for (int x = 0; x < nbVerticesInARow; x++, i++)
+            for (int x = 0; x <= nbVerticesInARow; x++, i++)
             {
-                vertices[i] = new Vector3(x/nbVerticesInARow * size.x, 0, y / nbVerticesInARow * size.x);
+                vertices[i] = new Vector3((x/nbVerticesInARow * size.x) - size.x / 2, 0, (y / nbVerticesInARow * size.y) - size.y / 2); // substracting size / 2 to keep the pivot point centered
             }
         }
         return vertices;
@@ -95,7 +94,6 @@ public class MeshGenerator : MonoBehaviour
         Mesh testMesh = new Mesh();
         testMesh.vertices = vertices;
         testMesh.triangles = triangles;
-        ApplyColor(ref testMesh);
         testMesh.RecalculateNormals();
         mf.mesh = testMesh;
         mr.material = _material;
@@ -115,32 +113,10 @@ public class MeshGenerator : MonoBehaviour
         MeshFilter mf = gm.AddComponent<MeshFilter>();
         MeshRenderer mr = gm.AddComponent<MeshRenderer>();
         testMesh.RecalculateNormals();
-        ApplyColor(ref testMesh);
         mf.mesh = testMesh;
         mr.material = material;
 
         return gm;
     }
 
-    private static void ApplyColor(ref Mesh mesh)
-    {
-        Color[] colors = new Color[mesh.vertexCount];
-        for(int i = 0; i< mesh.vertexCount; i++)
-        {
-            //print(mesh.vertices[i].y);
-            if(mesh.vertices[i].y<0.2)
-            {
-                colors[i] = Color.blue;
-            }
-            else if(mesh.vertices[i].y > 0.8)
-            {
-                colors[i] = Color.white;
-            }
-            else
-            {
-                colors[i] = Color.green;
-            }
-        }
-        mesh.colors = colors;
-    }
 }
