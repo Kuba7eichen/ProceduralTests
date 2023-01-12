@@ -20,4 +20,17 @@ public class NoiseGenerator : MonoBehaviour
         }
         return noiseMap;
     }
+
+    public static Vector3[] Test(GameObject currentChunk, Vector3[] vertices, float scale)
+    {
+        for (var i = 0; i < vertices.Length; i++)
+        {
+
+            Vector3 worldPosition = currentChunk.transform.TransformPoint(vertices[i]);
+
+            vertices[i].y += Mathf.PerlinNoise(worldPosition.x, worldPosition.z) * scale;
+        }
+
+        return vertices;
+    }
 }

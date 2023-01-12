@@ -71,40 +71,41 @@ public class MeshGenerator : MonoBehaviour
         return triangles;
     }
 
-    private static Vector3[] ApplyNoise(Vector3[] vertices, float scale, Vector2 offset)
+    private static Vector3[] ApplyNoise(GameObject currentChunk, Vector3[] vertices, float scale)
     {
-        float[,] noiseMap = NoiseGenerator.Generate((int)Mathf.Sqrt(vertices.Length), (int)Mathf.Sqrt(vertices.Length), scale, offset);
+        //float[,] noiseMap = NoiseGenerator.Generate((int)Mathf.Sqrt(vertices.Length), (int)Mathf.Sqrt(vertices.Length), scale, offset);
 
-        for(int i = 0; i < Mathf.Sqrt(vertices.Length); i++)
-        {
-            for(int j = 0; j < Mathf.Sqrt(vertices.Length); j++)
-            {
-                vertices[j + i * (int)Mathf.Sqrt(vertices.Length)] += Vector3.up * noiseMap[j, i];
-            }
-        }
+        //for(int i = 0; i < Mathf.Sqrt(vertices.Length); i++)
+        //{
+        //    for(int j = 0; j < Mathf.Sqrt(vertices.Length); j++)
+        //    {
+        //        vertices[j + i * (int)Mathf.Sqrt(vertices.Length)] += Vector3.up * noiseMap[j, i];
+        //    }
+        //}
+        NoiseGenerator.Test(currentChunk, vertices, scale);
         return vertices;
     }
 
-    public void RecalculateMesh(int subdivisions)
-    {
-        vertices = GenerateVertices(subdivisions, _sizes);
-        triangles = GenerateTriangles(vertices);
-        vertices = ApplyNoise(vertices, _scale, _offset);
+    //public void RecalculateMesh(int subdivisions)
+    //{
+    //    vertices = GenerateVertices(subdivisions, _sizes);
+    //    triangles = GenerateTriangles(vertices);
+    //    vertices = ApplyNoise(vertices, _scale, _offset);
 
-        Mesh testMesh = new Mesh();
-        testMesh.vertices = vertices;
-        testMesh.triangles = triangles;
-        testMesh.RecalculateNormals();
-        mf.mesh = testMesh;
-        mr.material = _material;
-    }
+    //    Mesh testMesh = new Mesh();
+    //    testMesh.vertices = vertices;
+    //    testMesh.triangles = triangles;
+    //    testMesh.RecalculateNormals();
+    //    mf.mesh = testMesh;
+    //    mr.material = _material;
+    //}
 
-    public static GameObject GenerateMesh(int subdivisions, Vector2 sizes, float scale, Vector2 offset, Material material)
+    public static GameObject GenerateMesh(GameObject currentTile, int subdivisions, Vector2 sizes, float scale, Vector2 offset, Material material)
     {
 
         Vector3[] vertices = GenerateVertices(subdivisions, sizes);
         int[] triangles = GenerateTriangles(vertices);
-        vertices = ApplyNoise(vertices, scale, offset);
+        vertices = ApplyNoise(currentTile, vertices, scale);
 
         Mesh testMesh = new Mesh();
         testMesh.vertices = vertices;

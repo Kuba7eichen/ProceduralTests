@@ -21,7 +21,7 @@ public class InputFieldManager : MonoBehaviour
         if(int.TryParse(_inputField.text, out subValue))
         {
             print("parsed");
-            _meshGenerator.GetComponent<MeshGenerator>().RecalculateMesh(subValue);
+            //_meshGenerator.GetComponent<MeshGenerator>().RecalculateMesh(subValue);
         }
     }
 }

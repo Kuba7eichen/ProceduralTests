@@ -35,7 +35,7 @@ public class MapGenerator : MonoBehaviour
 
     public GameObject GenerateChunk()
     {
-        GameObject chunk = MeshGenerator.GenerateMesh(_subdivisions, _chunkSize, _scale, Vector2.zero, _material);
+        GameObject chunk = MeshGenerator.GenerateMesh(_currentChunk, _subdivisions, _chunkSize, _scale, Vector2.zero, _material);
         chunk.transform.position = Vector3.zero;
         _chunks.Add(chunk);
         return chunk;
@@ -80,8 +80,10 @@ public class MapGenerator : MonoBehaviour
         }
         else
         {
-            chunk = MeshGenerator.GenerateMesh(_subdivisions, _chunkSize, _scale, offset, _material);
+            chunk = MeshGenerator.GenerateMesh(_currentChunk, _subdivisions, _chunkSize, _scale, offset, _material);
             chunk.transform.position = position;
+            chunk.AddComponent<MeshCollider>();
+
             _chunks.Add(chunk);
         }
         _currentChunk = chunk;

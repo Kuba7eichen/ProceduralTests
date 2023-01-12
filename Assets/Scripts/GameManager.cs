@@ -45,7 +45,6 @@ public class GameManager : MonoBehaviour
         if (dir != MapGenerator.Direction.NONE)
         {
             _currentChunk = _mapGenerator.GenerateChunk(dir);
-            _currentChunk.AddComponent<MeshCollider>();
         }
 
     }
